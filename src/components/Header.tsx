@@ -32,31 +32,31 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
+        <nav className="hidden items-center gap-6 text-sm font-bold text-slate-700 md:flex">
           <Link
             href="/#rechner"
-            className="transition hover:text-slate-900"
+            className="transition hover:text-green-600"
           >
             Rechner
           </Link>
 
           <Link
             href="/geraete"
-            className="transition hover:text-slate-900"
+            className="transition hover:text-green-600"
           >
             Geräte
           </Link>
 
           <Link
             href="/#so-funktionierts"
-            className="transition hover:text-slate-900"
+            className="transition hover:text-green-600"
           >
-            So funktioniert’s
+            So funktioniert&apos;s
           </Link>
 
           <Link
             href="/#faq"
-            className="transition hover:text-slate-900"
+            className="transition hover:text-green-600"
           >
             FAQ
           </Link>

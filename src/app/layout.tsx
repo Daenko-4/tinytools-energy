@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: siteUrl,
     siteName: "TinyTools Energy",
     title: "TinyTools Energy – Stromkosten einfach berechnen",
