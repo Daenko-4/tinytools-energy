@@ -1,14 +1,35 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
   return (
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-6">
         <Link
           href="/"
-          className="shrink-0 text-lg font-bold tracking-tight text-slate-900"
+          className="flex shrink-0 items-center gap-3"
         >
-          ⚡ TinyTools Energy
+          <Image
+            src="/brand/tinytools-icon-192.png"
+            alt="TinyTools Energy"
+            width={44}
+            height={44}
+            priority
+            className="rounded-xl"
+          />
+
+          <div className="hidden leading-tight sm:block">
+            <p className="font-extrabold tracking-tight text-slate-900">
+              TINY
+              <span className="text-green-600">
+                TOOLS
+              </span>
+            </p>
+
+            <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">
+              ENERGY
+            </p>
+          </div>
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
