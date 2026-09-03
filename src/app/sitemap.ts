@@ -27,5 +27,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     ...devicePages,
+    {
+      url: `${siteUrl}/impressum`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
+    {
+      url: `${siteUrl}/datenschutz`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
   ];
 }

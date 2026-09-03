@@ -14,6 +14,10 @@ export default function Footer() {
               Einfache Werkzeuge, die dir helfen,
               Stromverbrauch und Energiekosten besser zu verstehen.
             </p>
+
+            <p className="mt-3 text-xs leading-5 text-slate-400">
+              Derzeit ein privates, nicht kommerzielles Projekt.
+            </p>
           </div>
 
           <div>
@@ -50,9 +54,20 @@ export default function Footer() {
               Rechtliches
             </p>
 
-            <div className="mt-3 flex flex-col gap-2 text-sm text-slate-300">
-              <span>Impressum folgt</span>
-              <span>Datenschutz folgt</span>
+            <div className="mt-3 flex flex-col gap-2 text-sm text-slate-500">
+              <Link
+                href="/impressum"
+                className="transition hover:text-slate-900"
+              >
+                Impressum
+              </Link>
+
+              <Link
+                href="/datenschutz"
+                className="transition hover:text-slate-900"
+              >
+                Datenschutz
+              </Link>
             </div>
           </div>
         </div>
