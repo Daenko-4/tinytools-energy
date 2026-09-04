@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = "https://tinytools-energy.vercel.app";
+const siteUrl = "https://tinytools-energy.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,7 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-
     sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
