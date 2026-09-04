@@ -10,6 +10,7 @@ const categories = Array.from(
 );
 
 type Mode = "estimate" | "exact";
+type NumericInput = number | "";
 
 type EnergyCalculatorProps = {
   initialDevice?: string;
@@ -33,6 +34,18 @@ function formatKwh(value: number) {
 
 function nonNegative(value: number) {
   return Math.max(0, value);
+}
+
+function parseNumericInput(value: string): NumericInput {
+  if (value === "") {
+    return "";
+  }
+
+  return nonNegative(Number(value));
+}
+
+function numericValue(value: NumericInput) {
+  return value === "" ? 0 : value;
 }
 
 function LeafIcon() {
@@ -111,18 +124,18 @@ export default function EnergyCalculator({
   const [device, setDevice] = useState(initialDeviceData.name);
   const [customDeviceName, setCustomDeviceName] = useState("");
 
-  const [price, setPrice] = useState(0.35);
-  const [watts, setWatts] = useState(initialWatts);
+  const [price, setPrice] = useState<NumericInput>(0.35);
+  const [watts, setWatts] = useState<NumericInput>(initialWatts);
   const [minutesPerUse, setMinutesPerUse] =
-    useState(initialMinutes);
+    useState<NumericInput>(initialMinutes);
   const [usesPerWeek, setUsesPerWeek] =
-    useState(initialUses);
+    useState<NumericInput>(initialUses);
 
   const [estimatedKwhPerUse, setEstimatedKwhPerUse] =
-    useState(initialEstimatedKwh);
+    useState<NumericInput>(initialEstimatedKwh);
 
   const [measuredKwhPerUse, setMeasuredKwhPerUse] =
-    useState(Number(initialMeasuredKwh.toFixed(3)));
+    useState<NumericInput>(Number(initialMeasuredKwh.toFixed(3)));
 
   const selectedDevice = devices.find(
     (item) => item.name === device
@@ -238,27 +251,34 @@ export default function EnergyCalculator({
   }
 
 
+  const priceValue = numericValue(price);
+  const wattsValue = numericValue(watts);
+  const minutesPerUseValue = numericValue(minutesPerUse);
+  const usesPerWeekValue = numericValue(usesPerWeek);
+  const estimatedKwhPerUseValue = numericValue(estimatedKwhPerUse);
+  const measuredKwhPerUseValue = numericValue(measuredKwhPerUse);
+
   const calculatedPowerKwhPerUse =
-    (watts / 1000) * (minutesPerUse / 60);
+    (wattsValue / 1000) * (minutesPerUseValue / 60);
 
   const estimateKwhPerUse = isConsumptionDevice
-    ? estimatedKwhPerUse
+    ? estimatedKwhPerUseValue
     : calculatedPowerKwhPerUse;
 
   const actualKwhPerUse =
     mode === "estimate"
       ? estimateKwhPerUse
-      : measuredKwhPerUse;
+      : measuredKwhPerUseValue;
 
-  const hasValidPrice = price > 0;
-  const hasValidUses = usesPerWeek > 0;
+  const hasValidPrice = priceValue > 0;
+  const hasValidUses = usesPerWeekValue > 0;
 
   const hasValidConsumption =
     mode === "exact"
-      ? measuredKwhPerUse > 0
+      ? measuredKwhPerUseValue > 0
       : isConsumptionDevice
-        ? estimatedKwhPerUse > 0
-        : watts > 0 && minutesPerUse > 0;
+        ? estimatedKwhPerUseValue > 0
+        : wattsValue > 0 && minutesPerUseValue > 0;
 
   const calculationIsValid =
     hasValidPrice &&
@@ -266,23 +286,23 @@ export default function EnergyCalculator({
     hasValidConsumption;
 
   const yearlyKwh = calculationIsValid
-    ? actualKwhPerUse * usesPerWeek * 52
+    ? actualKwhPerUse * usesPerWeekValue * 52
     : 0;
 
-  const yearlyCost = yearlyKwh * price;
+  const yearlyCost = yearlyKwh * priceValue;
   const monthlyCost = yearlyCost / 12;
   const weeklyCost = yearlyCost / 52;
-  const costPerUse = actualKwhPerUse * price;
+  const costPerUse = actualKwhPerUse * priceValue;
 
   const warnings: string[] = [];
 
-  if (price > 1) {
+  if (priceValue > 1) {
     warnings.push(
       "Der Strompreis ist ungewöhnlich hoch. Prüfe bitte deine Eingabe."
     );
   }
 
-  if (usesPerWeek > 168) {
+  if (usesPerWeekValue > 168) {
     warnings.push(
       "Mehr als 168 Nutzungen pro Woche wirken ungewöhnlich. Prüfe bitte deine Eingabe."
     );
@@ -291,7 +311,7 @@ export default function EnergyCalculator({
   if (
     mode === "estimate" &&
     isPowerDevice &&
-    watts > 10000
+    wattsValue > 10000
   ) {
     warnings.push(
       "Eine Leistung über 10.000 W ist für ein typisches Haushaltsgerät ungewöhnlich."
@@ -301,7 +321,7 @@ export default function EnergyCalculator({
   if (
     mode === "estimate" &&
     isPowerDevice &&
-    minutesPerUse > 1440
+    minutesPerUseValue > 1440
   ) {
     warnings.push(
       "Die angegebene Nutzungsdauer liegt über 24 Stunden pro Nutzung."
@@ -310,7 +330,7 @@ export default function EnergyCalculator({
 
   if (
     mode === "exact" &&
-    measuredKwhPerUse > 50
+    measuredKwhPerUseValue > 50
   ) {
     warnings.push(
       "Mehr als 50 kWh pro Nutzung ist für ein typisches Haushaltsgerät ungewöhnlich."
@@ -439,11 +459,7 @@ export default function EnergyCalculator({
                   value={watts}
                   onFocus={handleCalculatorFieldFocus}
                   onChange={(event) =>
-                    setWatts(
-                      nonNegative(
-                        Number(event.target.value)
-                      )
-                    )
+                    setWatts(parseNumericInput(event.target.value))
                   }
                   className={`${fieldClassName} pr-14`}
                 />
@@ -472,11 +488,7 @@ export default function EnergyCalculator({
                 value={minutesPerUse}
                 onFocus={handleCalculatorFieldFocus}
                 onChange={(event) =>
-                  setMinutesPerUse(
-                    nonNegative(
-                      Number(event.target.value)
-                    )
-                  )
+                  setMinutesPerUse(parseNumericInput(event.target.value))
                 }
                 className={fieldClassName}
               />
@@ -505,9 +517,7 @@ export default function EnergyCalculator({
                 onFocus={handleCalculatorFieldFocus}
                 onChange={(event) =>
                   setEstimatedKwhPerUse(
-                    nonNegative(
-                      Number(event.target.value)
-                    )
+                    parseNumericInput(event.target.value)
                   )
                 }
                 className={`${fieldClassName} pr-16`}
@@ -540,9 +550,7 @@ export default function EnergyCalculator({
                 onFocus={handleCalculatorFieldFocus}
                 onChange={(event) =>
                   setMeasuredKwhPerUse(
-                    nonNegative(
-                      Number(event.target.value)
-                    )
+                    parseNumericInput(event.target.value)
                   )
                 }
                 className={`${fieldClassName} pr-16`}
@@ -574,11 +582,7 @@ export default function EnergyCalculator({
               value={price}
                 onFocus={handleCalculatorFieldFocus}
               onChange={(event) =>
-                setPrice(
-                  nonNegative(
-                    Number(event.target.value)
-                  )
-                )
+                setPrice(parseNumericInput(event.target.value))
               }
               className={`${fieldClassName} pr-16`}
             />
@@ -612,11 +616,7 @@ export default function EnergyCalculator({
               }
             }}
             onChange={(event) =>
-              setUsesPerWeek(
-                nonNegative(
-                  Number(event.target.value)
-                )
-              )
+              setUsesPerWeek(parseNumericInput(event.target.value))
             }
             className={fieldClassName}
           />
@@ -783,7 +783,7 @@ export default function EnergyCalculator({
         </p>
 
         <a
-          href="mailto:dan.florian@gmx.at?subject=Feedback%20zu%20TinyTools%20Energy"
+          href="mailto:DAN.FLORIAN@GMX.AT?subject=Feedback%20zu%20TinyTools%20Energy"
           className="mt-4 inline-flex items-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md"
         >
           Feedback senden →
