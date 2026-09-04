@@ -192,6 +192,19 @@ export default function EnergyCalculator({
 
   const resultRef = useRef<HTMLDivElement>(null);
 
+  function scrollToResultAfterLastField() {
+    if (window.innerWidth >= 640) {
+      return;
+    }
+
+    window.setTimeout(() => {
+      resultRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 120);
+  }
+
   function handleCalculatorFieldFocus() {
     if (window.innerWidth < 640) {
       return;
@@ -591,7 +604,13 @@ export default function EnergyCalculator({
             min="0"
             step="0.1"
             value={usesPerWeek}
-                onFocus={handleCalculatorFieldFocus}
+            onFocus={handleCalculatorFieldFocus}
+            onBlur={scrollToResultAfterLastField}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+            }}
             onChange={(event) =>
               setUsesPerWeek(
                 nonNegative(
