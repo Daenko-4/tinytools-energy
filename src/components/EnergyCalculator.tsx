@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { devices } from "@/data/devices";
 
 const CUSTOM_DEVICE = "Eigenes Gerät";
@@ -13,6 +13,8 @@ type Mode = "estimate" | "exact";
 
 type EnergyCalculatorProps = {
   initialDevice?: string;
+  controlledMode?: Mode;
+  onModeChange?: (mode: Mode) => void;
 };
 
 function formatEuro(value: number) {
@@ -33,31 +35,78 @@ function nonNegative(value: number) {
   return Math.max(0, value);
 }
 
+function LeafIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 4C12 4 6 8 5 16c4.5.6 8.2-.7 11-3.5C18.2 10.3 19.4 7.4 20 4Z" />
+      <path d="M5 20c2.3-5.2 5.8-9 11-11.5" />
+    </svg>
+  );
+}
+
+function CalculatorIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="5" y="3" width="14" height="18" rx="2" />
+      <path d="M8 7h8" />
+      <path d="M8 11h2" />
+      <path d="M12 11h2" />
+      <path d="M16 11h1" />
+      <path d="M8 15h2" />
+      <path d="M12 15h2" />
+      <path d="M16 15h1" />
+      <path d="M8 18h2" />
+      <path d="M12 18h5" />
+    </svg>
+  );
+}
+
 export default function EnergyCalculator({
   initialDevice = "Wasserkocher",
+  controlledMode,
+  onModeChange,
 }: EnergyCalculatorProps) {
   const initialDeviceData =
     devices.find((item) => item.name === initialDevice) ??
     devices[0];
 
-  const initialWatts =
-    initialDeviceData.watts ?? 0;
-
-  const initialMinutes =
-    initialDeviceData.typicalMinutes ?? 0;
-
-  const initialUses =
-    initialDeviceData.typicalUsesPerWeek ?? 1;
-
-  const initialEstimatedKwh =
-    initialDeviceData.kwhPerUse ?? 0;
+  const initialWatts = initialDeviceData.watts ?? 0;
+  const initialMinutes = initialDeviceData.typicalMinutes ?? 0;
+  const initialUses = initialDeviceData.typicalUsesPerWeek ?? 1;
+  const initialEstimatedKwh = initialDeviceData.kwhPerUse ?? 0;
 
   const initialMeasuredKwh =
     initialDeviceData.calculationType === "consumption"
       ? initialDeviceData.kwhPerUse ?? 0
       : (initialWatts / 1000) * (initialMinutes / 60);
 
-  const [mode, setMode] = useState<Mode>("estimate");
+  const [internalMode, setInternalMode] =
+    useState<Mode>("estimate");
+
+  const mode = controlledMode ?? internalMode;
+
+  function changeMode(newMode: Mode) {
+    setInternalMode(newMode);
+    onModeChange?.(newMode);
+  }
 
   const [device, setDevice] = useState(initialDeviceData.name);
   const [customDeviceName, setCustomDeviceName] = useState("");
@@ -141,6 +190,40 @@ export default function EnergyCalculator({
     loadDeviceDefaults(device);
   }
 
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  function handleCalculatorFieldFocus() {
+    window.setTimeout(() => {
+      const resultElement = resultRef.current;
+
+      if (!resultElement) {
+        return;
+      }
+
+      const resultRect = resultElement.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      const resultIsAlreadyVisible =
+        resultRect.top < viewportHeight * 0.82 &&
+        resultRect.bottom > 96;
+
+      if (resultIsAlreadyVisible) {
+        return;
+      }
+
+      const resultTargetPosition =
+        window.innerWidth < 640
+          ? viewportHeight * 0.76
+          : viewportHeight * 0.58;
+
+      window.scrollBy({
+        top: resultRect.top - resultTargetPosition,
+        behavior: "smooth",
+      });
+    }, 80);
+  }
+
+
   const calculatedPowerKwhPerUse =
     (watts / 1000) * (minutesPerUse / 60);
 
@@ -220,11 +303,53 @@ export default function EnergyCalculator({
     );
   }
 
+  const fieldClassName =
+    "w-full rounded-xl border border-slate-200 bg-[#fbfcfb] px-4 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-green-400 focus:bg-white focus:ring-4 focus:ring-green-100";
+
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+    <section className="rounded-[2rem] border border-slate-200/80 bg-white p-5 shadow-[0_20px_60px_-32px_rgba(15,23,42,0.25)] sm:p-8">
+      {/* Modus */}
+      <div className="mb-8">
+        <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-50 p-1.5">
+          <button
+            type="button"
+            onClick={() => changeMode("estimate")}
+            className={`relative flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold transition ${
+              mode === "estimate"
+                ? "bg-green-50 text-green-800 shadow-sm"
+                : "text-slate-500 hover:bg-white/60 hover:text-slate-900"
+            }`}
+          >
+            <LeafIcon />
+            <span>Gerät auswählen</span>
+
+          </button>
+
+          <button
+            type="button"
+            onClick={() => changeMode("exact")}
+            className={`relative flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold transition ${
+              mode === "exact"
+                ? "bg-green-50 text-green-800 shadow-sm"
+                : "text-slate-500 hover:bg-white/60 hover:text-slate-900"
+            }`}
+          >
+            <CalculatorIcon />
+            <span>Eigene Werte</span>
+
+          </button>
+        </div>
+
+        <p className="mt-4 text-sm leading-6 text-slate-500">
+          {mode === "estimate"
+            ? "TinyTools verwendet Orientierungswerte, die du an deine Nutzung anpassen kannst."
+            : "Nutze einen gemessenen oder anderweitig bekannten Verbrauch in kWh pro Nutzung."}
+        </p>
+      </div>
+
       {/* Gerät */}
       <div className="mb-8">
-        <label className="mb-2 block font-medium text-slate-700">
+        <label className="mb-2 block text-sm font-semibold text-slate-700">
           Gerät
         </label>
 
@@ -233,7 +358,7 @@ export default function EnergyCalculator({
           onChange={(event) =>
             handleDeviceChange(event.target.value)
           }
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3"
+          className={fieldClassName}
         >
           {categories.map((category) => (
             <optgroup key={category} label={category}>
@@ -262,8 +387,8 @@ export default function EnergyCalculator({
 
       {/* Eigenes Gerät */}
       {isCustomDevice && (
-        <div className="mb-8 rounded-xl border border-blue-200 bg-blue-50 p-5">
-          <label className="mb-2 block font-medium text-slate-700">
+        <div className="mb-8 rounded-2xl border border-green-100 bg-green-50/70 p-5">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Name des Geräts
           </label>
 
@@ -274,60 +399,21 @@ export default function EnergyCalculator({
               setCustomDeviceName(event.target.value)
             }
             placeholder="z. B. Ventilator"
-            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3"
+            className={fieldClassName}
           />
 
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm leading-6 text-slate-500">
             Optional – der Name erscheint später in deinem Ergebnis.
           </p>
         </div>
       )}
-
-      {/* Modus */}
-      <div className="mb-8">
-        <p className="mb-2 font-medium text-slate-700">
-          Wie möchtest du rechnen?
-        </p>
-
-        <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
-          <button
-            type="button"
-            onClick={() => setMode("estimate")}
-            className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
-              mode === "estimate"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
-            }`}
-          >
-            ⚡ Schnell schätzen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMode("exact")}
-            className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
-              mode === "exact"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
-            }`}
-          >
-            🎯 Genau berechnen
-          </button>
-        </div>
-
-        <p className="mt-3 text-sm text-slate-500">
-          {mode === "estimate"
-            ? "TinyTools verwendet Orientierungswerte, die du an deine Nutzung anpassen kannst."
-            : "Nutze einen gemessenen oder anderweitig bekannten Verbrauch in kWh pro Nutzung."}
-        </p>
-      </div>
 
       {/* Eingaben */}
       <div className="grid gap-6 sm:grid-cols-2">
         {mode === "estimate" && isPowerDevice && (
           <>
             <div>
-              <label className="mb-2 block font-medium text-slate-700">
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
                 Leistung
               </label>
 
@@ -337,22 +423,23 @@ export default function EnergyCalculator({
                   min="0"
                   step="1"
                   value={watts}
-                  onChange={(event) =>
+onFocus={handleCalculatorFieldFocus}
+onChange={(event) =>
                     setWatts(
                       nonNegative(
                         Number(event.target.value)
                       )
                     )
                   }
-                  className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-14"
+                  className={`${fieldClassName} pr-14`}
                 />
 
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
                   W
                 </span>
               </div>
 
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-2 text-sm leading-6 text-slate-500">
                 {isCustomDevice
                   ? "Die Wattzahl findest du häufig auf dem Typenschild."
                   : "Orientierungswert – prüfe wenn möglich die Angabe auf deinem Gerät."}
@@ -360,7 +447,7 @@ export default function EnergyCalculator({
             </div>
 
             <div>
-              <label className="mb-2 block font-medium text-slate-700">
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
                 Minuten pro Nutzung
               </label>
 
@@ -369,17 +456,18 @@ export default function EnergyCalculator({
                 min="0"
                 step="1"
                 value={minutesPerUse}
-                onChange={(event) =>
+onFocus={handleCalculatorFieldFocus}
+onChange={(event) =>
                   setMinutesPerUse(
                     nonNegative(
                       Number(event.target.value)
                     )
                   )
                 }
-                className="w-full rounded-lg border border-slate-300 px-4 py-3"
+                className={fieldClassName}
               />
 
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-2 text-sm leading-6 text-slate-500">
                 {isCustomDevice
                   ? "Trage die ungefähre Laufzeit pro Nutzung ein."
                   : "Vorgeschlagener Startwert – bitte an deine Nutzung anpassen."}
@@ -390,7 +478,7 @@ export default function EnergyCalculator({
 
         {mode === "estimate" && isConsumptionDevice && (
           <div>
-            <label className="mb-2 block font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Verbrauch pro Nutzung
             </label>
 
@@ -400,6 +488,7 @@ export default function EnergyCalculator({
                 min="0"
                 step="0.01"
                 value={estimatedKwhPerUse}
+                onFocus={handleCalculatorFieldFocus}
                 onChange={(event) =>
                   setEstimatedKwhPerUse(
                     nonNegative(
@@ -407,15 +496,15 @@ export default function EnergyCalculator({
                     )
                   )
                 }
-                className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-16"
+                className={`${fieldClassName} pr-16`}
               />
 
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
                 kWh
               </span>
             </div>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-2 text-sm leading-6 text-slate-500">
               Orientierungswert – passe ihn an, wenn du einen besseren
               Wert für dein Gerät oder Programm kennst.
             </p>
@@ -424,7 +513,7 @@ export default function EnergyCalculator({
 
         {mode === "exact" && (
           <div>
-            <label className="mb-2 block font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Tatsächlicher Verbrauch pro Nutzung
             </label>
 
@@ -434,6 +523,7 @@ export default function EnergyCalculator({
                 min="0"
                 step="0.01"
                 value={measuredKwhPerUse}
+                onFocus={handleCalculatorFieldFocus}
                 onChange={(event) =>
                   setMeasuredKwhPerUse(
                     nonNegative(
@@ -441,15 +531,15 @@ export default function EnergyCalculator({
                     )
                   )
                 }
-                className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-16"
+                className={`${fieldClassName} pr-16`}
               />
 
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
                 kWh
               </span>
             </div>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-2 text-sm leading-6 text-slate-500">
               Zum Beispiel ein Wert aus einem Strommessgerät oder einer
               Herstellerangabe.
             </p>
@@ -458,7 +548,7 @@ export default function EnergyCalculator({
 
         {/* Strompreis */}
         <div>
-          <label className="mb-2 block font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Strompreis
           </label>
 
@@ -468,6 +558,7 @@ export default function EnergyCalculator({
               min="0"
               step="0.01"
               value={price}
+                onFocus={handleCalculatorFieldFocus}
               onChange={(event) =>
                 setPrice(
                   nonNegative(
@@ -475,22 +566,22 @@ export default function EnergyCalculator({
                   )
                 )
               }
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-16"
+              className={`${fieldClassName} pr-16`}
             />
 
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
               €/kWh
             </span>
           </div>
 
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500">
             Deinen Arbeitspreis findest du auf deiner Stromrechnung.
           </p>
         </div>
 
         {/* Nutzungen */}
         <div>
-          <label className="mb-2 block font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Nutzungen pro Woche
           </label>
 
@@ -499,6 +590,7 @@ export default function EnergyCalculator({
             min="0"
             step="0.1"
             value={usesPerWeek}
+                onFocus={handleCalculatorFieldFocus}
             onChange={(event) =>
               setUsesPerWeek(
                 nonNegative(
@@ -506,10 +598,10 @@ export default function EnergyCalculator({
                 )
               )
             }
-            className="w-full rounded-lg border border-slate-300 px-4 py-3"
+            className={fieldClassName}
           />
 
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500">
             Auch Dezimalwerte sind möglich, zum Beispiel 0,5 für etwa
             jede zweite Woche.
           </p>
@@ -518,7 +610,7 @@ export default function EnergyCalculator({
 
       {/* Eingabehinweis */}
       {!calculationIsValid && (
-        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
           <p className="font-semibold text-slate-900">
             Noch fehlen Angaben
           </p>
@@ -532,7 +624,7 @@ export default function EnergyCalculator({
 
       {/* Warnungen */}
       {warnings.length > 0 && (
-        <div className="mt-6 rounded-xl border border-orange-200 bg-orange-50 p-4">
+        <div className="mt-6 rounded-2xl border border-orange-200 bg-orange-50 p-4">
           <p className="font-semibold text-slate-900">
             🔎 Bitte kurz prüfen
           </p>
@@ -546,15 +638,18 @@ export default function EnergyCalculator({
       )}
 
       {/* Ergebnis */}
-      <div className="mt-8 rounded-2xl bg-slate-900 p-6 text-white sm:p-8">
+      <div
+        ref={resultRef}
+        className="mt-8 rounded-2xl bg-gradient-to-br from-green-950 via-green-900 to-emerald-950 p-6 text-white shadow-lg shadow-green-950/10 sm:p-8"
+      >
         {calculationIsValid ? (
           <>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-medium text-slate-300">
+              <p className="text-sm font-medium text-green-100/80">
                 {displayDeviceName} kostet dich
               </p>
 
-              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-slate-200">
+              <span className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-xs font-semibold text-green-50">
                 {mode === "estimate"
                   ? "Schätzung"
                   : "Eigener Verbrauchswert"}
@@ -562,18 +657,18 @@ export default function EnergyCalculator({
             </div>
 
             <div className="mt-3">
-              <span className="text-4xl font-bold sm:text-5xl">
+              <span className="text-4xl font-extrabold tracking-tight sm:text-5xl">
                 {formatEuro(yearlyCost)} €
               </span>
 
-              <span className="ml-2 text-slate-300">
+              <span className="ml-2 text-green-100/80">
                 pro Jahr
               </span>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-sm text-slate-300">
+            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-sm text-green-100/75">
                   Pro Nutzung
                 </p>
 
@@ -582,8 +677,8 @@ export default function EnergyCalculator({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-sm text-slate-300">
+              <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-sm text-green-100/75">
                   Pro Woche
                 </p>
 
@@ -592,8 +687,8 @@ export default function EnergyCalculator({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-sm text-slate-300">
+              <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-sm text-green-100/75">
                   Pro Monat
                 </p>
 
@@ -602,8 +697,8 @@ export default function EnergyCalculator({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-sm text-slate-300">
+              <div className="rounded-xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <p className="text-sm text-green-100/75">
                   Verbrauch/Jahr
                 </p>
 
@@ -615,7 +710,7 @@ export default function EnergyCalculator({
           </>
         ) : (
           <>
-            <p className="text-sm font-medium text-slate-300">
+            <p className="text-sm font-medium text-green-100/80">
               Dein Ergebnis
             </p>
 
@@ -623,7 +718,7 @@ export default function EnergyCalculator({
               Bereit, sobald deine Angaben vollständig sind.
             </p>
 
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-sm leading-6 text-green-100/80">
               TinyTools zeigt dir dann Kosten pro Nutzung, Woche,
               Monat und Jahr.
             </p>
@@ -632,7 +727,7 @@ export default function EnergyCalculator({
       </div>
 
       {/* Spartipp */}
-      <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
+      <div className="mt-6 rounded-2xl border border-amber-200/80 bg-amber-50 p-5">
         <p className="font-semibold text-slate-900">
           💡 Spartipp
         </p>
@@ -646,7 +741,7 @@ export default function EnergyCalculator({
       </div>
 
       {/* Genauigkeit */}
-      <div className="mt-6 rounded-xl bg-slate-50 p-4">
+      <div className="mt-6 rounded-2xl border border-slate-100 bg-[#f7faf7] p-4">
         <p className="text-sm leading-6 text-slate-500">
           {mode === "estimate"
             ? isConsumptionDevice
@@ -657,7 +752,7 @@ export default function EnergyCalculator({
       </div>
 
       {/* Feedback */}
-      <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5 sm:p-6">
+      <div className="mt-6 rounded-2xl border border-green-200 bg-green-50/80 p-5 sm:p-6">
         <p className="font-semibold text-slate-900">
           💬 Hat dir TinyTools geholfen?
         </p>
@@ -667,10 +762,9 @@ export default function EnergyCalculator({
           wie TinyTools besser werden kann? Kurzes Feedback hilft uns sehr.
         </p>
 
-        {/* HIER DEINE E-MAIL-ADRESSE EINTRAGEN */}
         <a
           href="mailto:dan.florian@gmx.at?subject=Feedback%20zu%20TinyTools%20Energy"
-          className="mt-4 inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+          className="mt-4 inline-flex items-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md"
         >
           Feedback senden →
         </a>
@@ -686,7 +780,7 @@ export default function EnergyCalculator({
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
         >
           Werte zurücksetzen
         </button>

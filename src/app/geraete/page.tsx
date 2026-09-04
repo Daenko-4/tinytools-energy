@@ -6,23 +6,22 @@ import Header from "@/components/Header";
 import { devices } from "@/data/devices";
 
 export const metadata: Metadata = {
-  title: "Stromkosten nach Gerät berechnen",
+  title: "Stromverbrauch von Haushaltsgeräten",
   description:
-    "Entdecke Stromkosten-Rechner für typische Haushaltsgeräte – vom Wasserkocher über Waschmaschine und Fernseher bis zum Computer.",
+    "Entdecke typische Haushaltsgeräte und berechne ihre Stromkosten. Von Küche und Waschen bis Büro und Unterhaltung.",
   alternates: {
     canonical: "/geraete",
   },
-  openGraph: {
-    url: "/geraete",
-    title: "Stromkosten nach Gerät berechnen",
-    description:
-      "Entdecke Stromkosten-Rechner für typische Haushaltsgeräte – vom Wasserkocher über Waschmaschine und Fernseher bis zum Computer.",
-  },
 };
 
-const categories = Array.from(
-  new Set(devices.map((device) => device.category))
-);
+const categoryOrder = [
+  "Küche",
+  "Waschen",
+  "Haushalt",
+  "Bad",
+  "Unterhaltung",
+  "Büro",
+];
 
 const categoryAnchors: Record<string, string> = {
   Küche: "kueche",
@@ -46,36 +45,170 @@ function getCategoryAnchor(category: string) {
   );
 }
 
-export default function DevicesPage() {
+function CategoryIcon({ category }: { category: string }) {
+  const props = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
+  switch (category) {
+    case "Küche":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <path d="M5 9h14l-1 10H6L5 9Z" />
+          <path d="M8 9V7h8v2" />
+          <path d="M10 5h4" />
+          <path d="M19 11h2v5h-2" />
+        </svg>
+      );
+
+    case "Waschen":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M8 6h1" />
+          <path d="M12 6h4" />
+          <circle cx="12" cy="14" r="4" />
+        </svg>
+      );
+
+    case "Haushalt":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <path d="m3 11 9-8 9 8" />
+          <path d="M5 10v10h14V10" />
+          <path d="M9 20v-6h6v6" />
+        </svg>
+      );
+
+    case "Bad":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <path d="M5 13V8a5 5 0 0 1 10 0" />
+          <path d="M14 8h5" />
+          <path d="M15 12v1" />
+          <path d="M18 12v1" />
+          <path d="M12 15v1" />
+          <path d="M15 16v1" />
+          <path d="M18 15v1" />
+        </svg>
+      );
+
+    case "Unterhaltung":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <rect x="3" y="4" width="18" height="13" rx="2" />
+          <path d="M8 21h8" />
+          <path d="M12 17v4" />
+        </svg>
+      );
+
+    case "Büro":
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <rect x="5" y="4" width="14" height="11" rx="1.5" />
+          <path d="M3 19h18" />
+          <path d="m5 15-2 4" />
+          <path d="m19 15 2 4" />
+        </svg>
+      );
+
+    default:
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6"
+          {...props}
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 8v4l3 2" />
+        </svg>
+      );
+  }
+}
+
+export default function GeraetePage() {
+  const categories = categoryOrder
+    .map((category) => ({
+      category,
+      devices: devices.filter((device) => device.category === category),
+    }))
+    .filter((group) => group.devices.length > 0);
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-[#f8faf8] text-slate-950">
       <Header />
 
       <main>
         {/* Hero */}
-        <section className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-6xl px-5 py-16 sm:px-6 sm:py-20">
-            <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
-              Gerätebibliothek
-            </p>
+        <section className="relative overflow-hidden border-b border-slate-200/70 bg-white">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(34,197,94,0.10),transparent_35%),radial-gradient(circle_at_5%_5%,rgba(34,197,94,0.06),transparent_25%)]" />
 
-            <h1 className="mt-3 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">
-              Was kostet welches Gerät an Strom?
+          <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-20">
+            <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-green-800">
+              <span>🌿</span>
+              Einfach. Klar. Direkt verständlich.
+            </div>
+
+            <h1 className="mt-7 max-w-4xl text-4xl font-extrabold tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
+              Stromkosten deiner
+              <br />
+              <span className="text-green-700">
+                Haushaltsgeräte
+              </span>
             </h1>
 
             <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-              Wähle ein Haushaltsgerät und berechne mit wenigen Angaben,
-              wie viel Strom und Geld deine Nutzung ungefähr pro Woche,
-              Monat und Jahr kostet.
+              Wähle ein Gerät aus und finde heraus, wie viel Strom es
+              verbraucht und welche Kosten bei deiner Nutzung entstehen
+              können.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {categories.map((category) => (
+              {categories.map(({ category }) => (
                 <a
                   key={category}
                   href={`#${getCategoryAnchor(category)}`}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-green-300 hover:bg-green-50 hover:text-green-700"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-green-200 hover:bg-green-50 hover:text-green-700"
                 >
+                  <span className="text-green-700">
+                    <CategoryIcon category={category} />
+                  </span>
+
                   {category}
                 </a>
               ))}
@@ -85,133 +218,87 @@ export default function DevicesPage() {
 
         {/* Geräte */}
         <section className="px-5 py-14 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-6xl space-y-16">
-            {categories.map((category) => {
-              const categoryDevices = devices.filter(
-                (device) => device.category === category
-              );
-
-              return (
-                <div
+          <div className="mx-auto max-w-6xl">
+            <div className="space-y-16">
+              {categories.map(({ category, devices: categoryDevices }) => (
+                <section
                   key={category}
                   id={getCategoryAnchor(category)}
-                  className="scroll-mt-24"
+                  className="scroll-mt-28"
                 >
-                  <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
-                        Kategorie
-                      </p>
+                  <div className="flex items-center gap-4">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-700">
+                      <CategoryIcon category={category} />
+                    </span>
 
-                      <h2 className="mt-2 text-3xl font-bold tracking-tight">
+                    <div>
+                      <h2 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">
                         {category}
                       </h2>
-                    </div>
 
-                    <p className="text-sm text-slate-500">
-                      {categoryDevices.length}{" "}
-                      {categoryDevices.length === 1 ? "Gerät" : "Geräte"}
-                    </p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {categoryDevices.length}{" "}
+                        {categoryDevices.length === 1 ? "Gerät" : "Geräte"}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {categoryDevices.map((device) => (
                       <Link
                         key={device.slug}
                         href={`/geraete/${device.slug}`}
-                        className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                        className="group flex min-h-[150px] flex-col rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_12px_35px_-25px_rgba(15,23,42,0.3)] transition hover:-translate-y-1 hover:border-green-200 hover:shadow-md"
                       >
                         <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <p className="text-sm font-semibold text-blue-600">
-                              {device.category}
-                            </p>
-
-                            <h3 className="mt-2 text-xl font-bold text-slate-900">
-                              {device.name}
-                            </h3>
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-xl">
+                            ⚡
                           </div>
 
-                          <span className="text-xl text-slate-300 transition group-hover:translate-x-1 group-hover:text-blue-600">
+                          <span className="text-xl text-green-600 transition group-hover:translate-x-1">
                             →
                           </span>
                         </div>
 
-                        <p className="mt-4 flex-1 text-sm leading-6 text-slate-600">
-                          {device.description}
+                        <h3 className="mt-5 text-lg font-bold text-slate-950 transition group-hover:text-green-700">
+                          {device.name}
+                        </h3>
+
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          Stromverbrauch und Kosten berechnen
                         </p>
-
-                        <div className="mt-5 border-t border-slate-100 pt-4">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                            Datenbasis
-                          </p>
-
-                          <p className="mt-1 text-sm font-medium text-slate-600">
-                            {device.dataBasis}
-                          </p>
-                        </div>
                       </Link>
                     ))}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Eigene Geräte */}
-        <section className="border-t border-slate-200 bg-white px-5 py-16 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-5xl rounded-3xl bg-slate-900 px-6 py-10 text-white sm:px-10 sm:py-12">
-            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-blue-300">
-                  Gerät nicht dabei?
-                </p>
-
-                <h2 className="mt-3 text-3xl font-bold tracking-tight">
-                  Berechne dein eigenes Gerät
-                </h2>
-
-                <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-                  Im allgemeinen TinyTools-Rechner kannst du ein eigenes
-                  Gerät anlegen und Leistung, Laufzeit und Nutzung selbst
-                  eingeben.
-                </p>
-              </div>
-
-              <Link
-                href="/#rechner"
-                className="inline-flex justify-center rounded-xl bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
-              >
-                Zum Rechner
-              </Link>
+                </section>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Transparenz */}
-        <section className="px-5 py-14 sm:px-6 sm:py-16">
-          <div className="mx-auto max-w-5xl">
-            <div className="rounded-2xl border border-slate-200 bg-slate-100 p-6 sm:p-8">
-              <h2 className="text-xl font-bold">
-                Wie sind die Gerätewerte zu verstehen?
-              </h2>
-
-              <p className="mt-4 leading-7 text-slate-600">
-                TinyTools arbeitet mit Orientierungswerten. Wo ein
-                Energieverbrauch pro Zyklus sinnvoll verfügbar ist,
-                verwenden wir einen kWh-Wert als Ausgangspunkt. Bei
-                einfacheren Geräten berechnen wir den Verbrauch
-                näherungsweise aus Leistung und Laufzeit.
-              </p>
-
-              <p className="mt-4 leading-7 text-slate-600">
-                Für dein konkretes Gerät sind Typenschild,
-                Bedienungsanleitung, Energielabel oder ein eigener
-                Messwert immer die bessere Grundlage. Deshalb kannst du
-                die vorgeschlagenen Werte im Rechner anpassen.
-              </p>
+        {/* CTA */}
+        <section className="px-5 pb-16 sm:px-6 sm:pb-20">
+          <div className="mx-auto max-w-5xl rounded-[2rem] border border-green-100 bg-gradient-to-br from-green-50 via-white to-green-50 p-8 text-center shadow-[0_20px_60px_-35px_rgba(21,128,61,0.35)] sm:p-12">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-2xl">
+              🌿
             </div>
+
+            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-950">
+              Dein Gerät ist nicht dabei?
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-600">
+              Kein Problem. Im Stromkosten-Rechner kannst du auch ein
+              eigenes Gerät anlegen und deine Werte selbst eingeben.
+            </p>
+
+            <Link
+              href="/#rechner"
+              className="mt-7 inline-flex items-center gap-3 rounded-xl bg-green-700 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-green-800 hover:shadow-md"
+            >
+              Zum Stromkosten-Rechner
+              <span>→</span>
+            </Link>
           </div>
         </section>
       </main>
