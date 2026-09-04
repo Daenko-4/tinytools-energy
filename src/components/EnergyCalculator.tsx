@@ -656,6 +656,31 @@ export default function EnergyCalculator({
         </p>
       </div>
 
+      {/* Feedback */}
+      <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5 sm:p-6">
+        <p className="font-semibold text-slate-900">
+          💬 Hat dir TinyTools geholfen?
+        </p>
+
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Fehlt dir ein Gerät, war etwas unklar oder hast du eine Idee,
+          wie TinyTools besser werden kann? Kurzes Feedback hilft uns sehr.
+        </p>
+
+        {/* HIER DEINE E-MAIL-ADRESSE EINTRAGEN */}
+        <a
+          href="mailto:dan.florian@mx.at?subject=Feedback%20zu%20TinyTools%20Energy"
+          className="mt-4 inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+        >
+          Feedback senden →
+        </a>
+
+        <p className="mt-3 text-xs leading-5 text-slate-500">
+          Der Button öffnet dein E-Mail-Programm. TinyTools speichert dabei
+          keine Daten und verwendet weiterhin kein Tracking.
+        </p>
+      </div>
+
       {/* Reset */}
       <div className="mt-6 flex justify-end">
         <button
