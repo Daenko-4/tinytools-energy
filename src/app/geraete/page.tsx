@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   title: "Stromkosten nach Gerät berechnen",
   description:
     "Entdecke Stromkosten-Rechner für typische Haushaltsgeräte – vom Wasserkocher über Waschmaschine und Fernseher bis zum Computer.",
+
+  alternates: {
+    canonical: "/geraete",
+  },
+
+  openGraph: {
+    url: "/geraete",
+    title: "Stromkosten nach Gerät berechnen",
+    description:
+      "Entdecke Stromkosten-Rechner für typische Haushaltsgeräte – vom Wasserkocher über Waschmaschine und Fernseher bis zum Computer.",
+  },
 };
 
 const categories = Array.from(
@@ -79,9 +90,7 @@ export default function DevicesPage() {
 
                     <p className="text-sm text-slate-500">
                       {categoryDevices.length}{" "}
-                      {categoryDevices.length === 1
-                        ? "Gerät"
-                        : "Geräte"}
+                      {categoryDevices.length === 1 ? "Gerät" : "Geräte"}
                     </p>
                   </div>
 

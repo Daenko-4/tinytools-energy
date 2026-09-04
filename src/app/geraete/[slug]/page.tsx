@@ -64,6 +64,16 @@ export async function generateMetadata({
   return {
     title: `${device.name} Stromkosten berechnen`,
     description: device.description,
+
+    alternates: {
+      canonical: `/geraete/${device.slug}`,
+    },
+
+    openGraph: {
+      url: `/geraete/${device.slug}`,
+      title: `${device.name} Stromkosten berechnen`,
+      description: device.description,
+    },
   };
 }
 
