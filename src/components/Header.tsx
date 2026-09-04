@@ -70,9 +70,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 backdrop-blur-xl">
       <div className="mx-auto max-w-6xl px-5 sm:px-6">
         <div className="flex min-h-[72px] items-center justify-between gap-4">
-          {/* Marke links */}
           <div className="flex shrink-0 items-center">
-            {/* Nur Logo + TinyTools sind klickbar */}
             <Link
               href="/"
               onClick={closeMenu}
@@ -82,13 +80,11 @@ export default function Header() {
               <TinyToolsLogo />
             </Link>
 
-            {/* Energy ist bewusst kein Link und hat keinen Hintergrund */}
-            <span className="ml-2 mt-[10px] hidden text-[9px] font-extrabold uppercase leading-none tracking-[0.14em] text-green-700 sm:inline-flex">
+            <span className="ml-1.5 mt-[10px] inline-flex text-[8px] font-extrabold uppercase leading-none tracking-[0.12em] text-green-700 sm:ml-2 sm:text-[9px] sm:tracking-[0.14em]">
               Energy
             </span>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden items-center gap-7 text-[15px] font-semibold text-slate-700 md:flex">
             <a
               href="/#rechner"
@@ -128,7 +124,6 @@ export default function Header() {
               Berechnen
             </a>
 
-            {/* Mobile Menü */}
             <button
               type="button"
               onClick={() => setMenuOpen((current) => !current)}
@@ -147,7 +142,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {menuOpen && (
           <nav className="border-t border-slate-200 py-3 md:hidden">
             <div className="flex flex-col gap-1">
