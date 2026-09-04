@@ -49,7 +49,7 @@ export default function DatenschutzPage() {
 
             <div className="mt-4 space-y-1 leading-7">
               <p>Dan Florian</p>
-              <p>Traiskirchen</p>
+              <p>Möllersdorf</p>
               <p>Österreich</p>
               <p>
                 E-Mail:{" "}
