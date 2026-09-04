@@ -193,6 +193,10 @@ export default function EnergyCalculator({
   const resultRef = useRef<HTMLDivElement>(null);
 
   function handleCalculatorFieldFocus() {
+    if (window.innerWidth < 640) {
+      return;
+    }
+
     window.setTimeout(() => {
       const resultElement = resultRef.current;
 
@@ -211,10 +215,7 @@ export default function EnergyCalculator({
         return;
       }
 
-      const resultTargetPosition =
-        window.innerWidth < 640
-          ? viewportHeight * 0.76
-          : viewportHeight * 0.58;
+      const resultTargetPosition = viewportHeight * 0.58;
 
       window.scrollBy({
         top: resultRect.top - resultTargetPosition,
@@ -423,8 +424,8 @@ export default function EnergyCalculator({
                   min="0"
                   step="1"
                   value={watts}
-onFocus={handleCalculatorFieldFocus}
-onChange={(event) =>
+                  onFocus={handleCalculatorFieldFocus}
+                  onChange={(event) =>
                     setWatts(
                       nonNegative(
                         Number(event.target.value)
@@ -456,8 +457,8 @@ onChange={(event) =>
                 min="0"
                 step="1"
                 value={minutesPerUse}
-onFocus={handleCalculatorFieldFocus}
-onChange={(event) =>
+                onFocus={handleCalculatorFieldFocus}
+                onChange={(event) =>
                   setMinutesPerUse(
                     nonNegative(
                       Number(event.target.value)
@@ -763,7 +764,7 @@ onChange={(event) =>
         </p>
 
         <a
-          href="mailto:dan.florian@gmx.at?subject=Feedback%20zu%20TinyTools%20Energy"
+          href="mailto:DAN.FLORIAN@GMX.AT?subject=Feedback%20zu%20TinyTools%20Energy"
           className="mt-4 inline-flex items-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md"
         >
           Feedback senden →
