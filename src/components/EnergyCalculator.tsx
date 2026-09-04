@@ -201,6 +201,13 @@ export default function EnergyCalculator({
   function handleReset() {
     setPrice(0.35);
     loadDeviceDefaults(device);
+
+    window.requestAnimationFrame(() => {
+      document.getElementById("rechner")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
   }
 
   const resultRef = useRef<HTMLDivElement>(null);
