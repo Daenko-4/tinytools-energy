@@ -9,11 +9,9 @@ export const metadata: Metadata = {
   title: "Stromkosten nach Gerät berechnen",
   description:
     "Entdecke Stromkosten-Rechner für typische Haushaltsgeräte – vom Wasserkocher über Waschmaschine und Fernseher bis zum Computer.",
-
   alternates: {
     canonical: "/geraete",
   },
-
   openGraph: {
     url: "/geraete",
     title: "Stromkosten nach Gerät berechnen",
@@ -25,6 +23,28 @@ export const metadata: Metadata = {
 const categories = Array.from(
   new Set(devices.map((device) => device.category))
 );
+
+const categoryAnchors: Record<string, string> = {
+  Küche: "kueche",
+  Waschen: "waschen",
+  Haushalt: "haushalt",
+  Bad: "bad",
+  Unterhaltung: "unterhaltung",
+  Büro: "buero",
+};
+
+function getCategoryAnchor(category: string) {
+  return (
+    categoryAnchors[category] ??
+    category
+      .toLowerCase()
+      .replace(/ä/g, "ae")
+      .replace(/ö/g, "oe")
+      .replace(/ü/g, "ue")
+      .replace(/ß/g, "ss")
+      .replace(/\s+/g, "-")
+  );
+}
 
 export default function DevicesPage() {
   return (
@@ -53,8 +73,8 @@ export default function DevicesPage() {
               {categories.map((category) => (
                 <a
                   key={category}
-                  href={`#${category.toLowerCase()}`}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-100"
+                  href={`#${getCategoryAnchor(category)}`}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-green-300 hover:bg-green-50 hover:text-green-700"
                 >
                   {category}
                 </a>
@@ -74,8 +94,8 @@ export default function DevicesPage() {
               return (
                 <div
                   key={category}
-                  id={category.toLowerCase()}
-                  className="scroll-mt-8"
+                  id={getCategoryAnchor(category)}
+                  className="scroll-mt-24"
                 >
                   <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                     <div>

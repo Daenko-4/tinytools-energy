@@ -36,12 +36,30 @@ const steps = [
 ];
 
 const categories = [
-  "Küche",
-  "Waschen",
-  "Haushalt",
-  "Bad",
-  "Unterhaltung",
-  "Büro",
+  {
+    name: "Küche",
+    href: "/geraete#kueche",
+  },
+  {
+    name: "Waschen",
+    href: "/geraete#waschen",
+  },
+  {
+    name: "Haushalt",
+    href: "/geraete#haushalt",
+  },
+  {
+    name: "Bad",
+    href: "/geraete#bad",
+  },
+  {
+    name: "Unterhaltung",
+    href: "/geraete#unterhaltung",
+  },
+  {
+    name: "Büro",
+    href: "/geraete#buero",
+  },
 ];
 
 const faqs = [
@@ -274,12 +292,18 @@ export default function Home() {
 
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 {categories.map((category) => (
-                  <div
-                    key={category}
-                    className="flex min-h-28 items-center justify-center rounded-2xl border border-slate-200 bg-white p-5 text-center font-semibold shadow-sm"
+                  <a
+                    key={category.name}
+                    href={category.href}
+                    className="group flex min-h-28 items-center justify-center rounded-2xl border border-slate-200 bg-white p-5 text-center font-semibold shadow-sm transition hover:-translate-y-0.5 hover:border-green-300 hover:bg-green-50 hover:text-green-700 hover:shadow-md"
                   >
-                    {category}
-                  </div>
+                    <span>
+                      {category.name}
+                      <span className="ml-2 inline-block text-slate-300 transition group-hover:translate-x-1 group-hover:text-green-600">
+                        →
+                      </span>
+                    </span>
+                  </a>
                 ))}
               </div>
             </div>
