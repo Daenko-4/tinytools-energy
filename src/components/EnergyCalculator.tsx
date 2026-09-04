@@ -783,7 +783,7 @@ export default function EnergyCalculator({
         </p>
 
         <a
-          href="mailto:DAN.FLORIAN@GMX.AT?subject=Feedback%20zu%20TinyTools%20Energy"
+          href="mailto:dan.florian@gmx.at?subject=Feedback%20zu%20TinyTools%20Energy"
           className="mt-4 inline-flex items-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md"
         >
           Feedback senden →
