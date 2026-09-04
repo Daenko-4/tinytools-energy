@@ -43,10 +43,10 @@ export default function ImpressumPage() {
                 <p className="mt-3 leading-7 text-slate-600">
                   E-Mail:{" "}
                   <a
-                    href="mailto:dan.florian@example.at"
+                    href="mailto:dan.florian@gmx.at"
                     className="font-medium text-green-700 hover:text-green-800"
                   >
-                    DEINE_EMAIL@BEISPIEL.AT
+                    dan.florian@gmx.at
                   </a>
                 </p>
               </section>
