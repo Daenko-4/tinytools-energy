@@ -669,7 +669,7 @@ export default function EnergyCalculator({
 
         {/* HIER DEINE E-MAIL-ADRESSE EINTRAGEN */}
         <a
-          href="mailto:dan.florian@mx.at?subject=Feedback%20zu%20TinyTools%20Energy"
+          href="mailto:dan.florian@gmx.at?subject=Feedback%20zu%20TinyTools%20Energy"
           className="mt-4 inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
         >
           Feedback senden →
