@@ -171,44 +171,26 @@ export default function Header({ locale = "de" }: HeaderProps) {
             <Link
               href={languageHref}
               onClick={closeMenu}
-              className="group relative -left-2 h-8 w-[70px] overflow-hidden rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-[0.05em] shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] transition duration-200 hover:border-green-200 hover:shadow-[inset_0_1px_2px_rgba(15,23,42,0.06),0_2px_6px_rgba(15,23,42,0.05)] active:scale-[0.97]"
+              className="group relative -left-2 flex h-[34px] w-[82px] items-center overflow-hidden rounded-full border border-slate-300 bg-white shadow-[inset_0_1px_2px_rgba(15,23,42,0.05),0_2px_6px_rgba(15,23,42,0.08)] transition duration-200 hover:border-green-300 hover:shadow-[inset_0_1px_2px_rgba(15,23,42,0.05),0_3px_8px_rgba(15,23,42,0.12)] active:scale-[0.98]"
               aria-label={
                 locale === "de"
                   ? "Switch to English"
                   : "Zur deutschen Version wechseln"
               }
             >
-              {/* Aktives DE-Feld */}
+              {/* Active language knob */}
               <span
                 aria-hidden="true"
-                className={`absolute left-[4px] top-[3px] flex h-6 w-[26px] items-center justify-center rounded-[6px] border border-green-100 bg-green-50 shadow-sm transition-all duration-200 ease-out ${
+                className={`absolute top-[2px] h-[28px] w-[38px] rounded-full border border-green-200 bg-green-50 shadow-[0_2px_5px_rgba(15,23,42,0.15),inset_0_1px_1px_rgba(255,255,255,0.95)] transition-all duration-300 ease-out ${
                   locale === "de"
-                    ? "opacity-100"
-                    : "opacity-0"
+                    ? "left-[2px]"
+                    : "left-[41px]"
                 }`}
               />
-
-              {/* Aktives EN-Feld */}
-              <span
-                aria-hidden="true"
-                className={`absolute right-[4px] top-[3px] flex h-6 w-[26px] items-center justify-center rounded-[6px] border border-green-100 bg-green-50 shadow-sm transition-all duration-200 ease-out ${
-                  locale === "en"
-                    ? "opacity-100"
-                    : "opacity-0"
-                }`}
-              />
-
-              {/* Sichtbarer Trenner */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 text-[14px] font-normal leading-none text-slate-300"
-              >
-                |
-              </span>
 
               {/* DE */}
               <span
-                className={`absolute left-[4px] top-[3px] z-10 flex h-6 w-[26px] items-center justify-center transition-colors duration-200 ${
+                className={`relative z-10 flex w-1/2 items-center justify-center text-[10px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
                   locale === "de"
                     ? "text-green-700"
                     : "text-slate-400"
@@ -219,7 +201,7 @@ export default function Header({ locale = "de" }: HeaderProps) {
 
               {/* EN */}
               <span
-                className={`absolute right-[4px] top-[3px] z-10 flex h-6 w-[26px] items-center justify-center transition-colors duration-200 ${
+                className={`relative z-10 flex w-1/2 items-center justify-center text-[10px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
                   locale === "en"
                     ? "text-green-700"
                     : "text-slate-400"
