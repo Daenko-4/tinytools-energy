@@ -786,11 +786,11 @@ export default function HomePage({
         </section>
 
         {/* Calculator */}
-        <section
-          id="rechner"
-          className="scroll-mt-24 px-5 py-14 sm:px-6 sm:py-20"
-        >
-          <div className="mx-auto max-w-5xl">
+        <section className="px-5 py-14 sm:px-6 sm:py-20">
+          <div
+            id="rechner"
+            className="mx-auto max-w-5xl scroll-mt-[76px] sm:scroll-mt-[84px]"
+          >
             <p className="text-sm font-bold uppercase tracking-[0.16em] text-green-700">
               {text.calculator.label}
             </p>
