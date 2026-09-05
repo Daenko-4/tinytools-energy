@@ -190,7 +190,7 @@ export default function Header({ locale = "de" }: HeaderProps) {
 
               {/* DE */}
               <span
-                className={`relative z-10 flex w-1/2 items-center justify-center text-[10px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
+                className={`relative z-10 flex w-1/2 items-center justify-center text-[11px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
                   locale === "de"
                     ? "text-green-700"
                     : "text-slate-400"
@@ -201,7 +201,7 @@ export default function Header({ locale = "de" }: HeaderProps) {
 
               {/* EN */}
               <span
-                className={`relative z-10 flex w-1/2 items-center justify-center text-[10px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
+                className={`relative z-10 flex w-1/2 items-center justify-center text-[11px] font-bold uppercase tracking-[0.03em] transition-colors duration-200 ${
                   locale === "en"
                     ? "text-green-700"
                     : "text-slate-400"
