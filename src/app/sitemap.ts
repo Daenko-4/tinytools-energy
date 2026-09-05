@@ -113,6 +113,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.2,
+
+      alternates: {
+        languages: {
+          de: `${siteUrl}/impressum`,
+          en: `${siteUrl}/en/imprint`,
+          "x-default": `${siteUrl}/impressum`,
+        },
+      },
+    },
+
+    {
+      url: `${siteUrl}/en/imprint`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.2,
+
+      alternates: {
+        languages: {
+          de: `${siteUrl}/impressum`,
+          en: `${siteUrl}/en/imprint`,
+          "x-default": `${siteUrl}/impressum`,
+        },
+      },
     },
 
     {
@@ -120,6 +143,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.2,
+
+      alternates: {
+        languages: {
+          de: `${siteUrl}/datenschutz`,
+          en: `${siteUrl}/en/privacy`,
+          "x-default": `${siteUrl}/datenschutz`,
+        },
+      },
+    },
+
+    {
+      url: `${siteUrl}/en/privacy`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.2,
+
+      alternates: {
+        languages: {
+          de: `${siteUrl}/datenschutz`,
+          en: `${siteUrl}/en/privacy`,
+          "x-default": `${siteUrl}/datenschutz`,
+        },
+      },
     },
   ];
 }

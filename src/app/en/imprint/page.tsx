@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Impressum",
-  description: "Impressum von TinyTools Energy.",
+  title: "Imprint",
+  description: "Imprint of TinyTools Energy.",
   alternates: {
-    canonical: "/impressum",
+    canonical: "/en/imprint",
     languages: {
       de: "/impressum",
       en: "/en/imprint",
@@ -16,47 +16,46 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ImpressumPage() {
+export default function ImprintPage() {
   return (
     <div className="min-h-screen bg-[#f8faf8] text-slate-950">
-      <Header />
+      <Header locale="en" />
 
       <main className="px-5 py-14 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_-32px_rgba(15,23,42,0.2)] sm:p-10">
             <p className="text-sm font-bold uppercase tracking-[0.16em] text-green-700">
-              Rechtliches
+              Legal
             </p>
 
             <h1 className="mt-3 text-4xl font-extrabold tracking-[-0.04em] text-slate-950 sm:text-5xl">
-              Impressum
+              Imprint
             </h1>
 
             <p className="mt-5 leading-7 text-slate-600">
-              TinyTools Energy ist derzeit ein privates, nicht
-              kommerzielles Projekt.
+              TinyTools Energy is currently a private, non-commercial project.
             </p>
 
             <div className="mt-10 space-y-8">
               <section>
                 <h2 className="text-xl font-bold text-slate-950">
-                  Medieninhaber
+                  Media owner
                 </h2>
 
                 <div className="mt-3 space-y-1 leading-7 text-slate-600">
                   <p>Dan Florian</p>
                   <p>Möllersdorf</p>
-                  <p>Österreich</p>
+                  <p>Austria</p>
                 </div>
               </section>
 
               <section>
                 <h2 className="text-xl font-bold text-slate-950">
-                  Kontakt
+                  Contact
                 </h2>
 
                 <p className="mt-3 leading-7 text-slate-600">
-                  E-Mail:{" "}
+                  Email:{" "}
                   <a
                     href="mailto:parkwaydrive@gmx.at"
                     className="font-medium text-green-700 hover:text-green-800"
@@ -68,26 +67,26 @@ export default function ImpressumPage() {
 
               <section>
                 <h2 className="text-xl font-bold text-slate-950">
-                  Grundlegende Richtung
+                  Basic direction
                 </h2>
 
                 <p className="mt-3 leading-7 text-slate-600">
-                  TinyTools Energy stellt einfache Informationen und
-                  Werkzeuge rund um Stromverbrauch und Stromkosten von
-                  Haushaltsgeräten bereit.
+                  TinyTools Energy provides simple information and tools related
+                  to the electricity consumption and electricity costs of
+                  household devices.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-xl font-bold text-slate-950">
-                  Hinweis
+                  Notice
                 </h2>
 
                 <p className="mt-3 leading-7 text-slate-600">
-                  Die auf TinyTools Energy bereitgestellten Berechnungen
-                  und Informationen dienen der Orientierung. Tatsächliche
-                  Verbrauchswerte und Stromkosten können je nach Gerät,
-                  Nutzung und Stromtarif abweichen.
+                  The calculations and information provided by TinyTools Energy
+                  are intended as a guide. Actual electricity consumption and
+                  costs may vary depending on the device, usage and electricity
+                  tariff.
                 </p>
               </section>
             </div>
@@ -95,7 +94,7 @@ export default function ImpressumPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer locale="en" />
     </div>
   );
 }

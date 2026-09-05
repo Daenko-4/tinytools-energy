@@ -23,6 +23,7 @@ const footerText = {
     imprint: "Impressum",
     privacy: "Datenschutz",
   },
+
   en: {
     description:
       "Simple tools that help you understand electricity consumption and energy costs.",
@@ -35,6 +36,14 @@ const footerText = {
     privacy: "Privacy",
   },
 } as const;
+
+function getImprintHref(locale: Locale) {
+  return locale === "de" ? "/impressum" : "/en/imprint";
+}
+
+function getPrivacyHref(locale: Locale) {
+  return locale === "de" ? "/datenschutz" : "/en/privacy";
+}
 
 export default function Footer({ locale = "de" }: FooterProps) {
   const text = footerText[locale];
@@ -93,14 +102,14 @@ export default function Footer({ locale = "de" }: FooterProps) {
 
             <div className="mt-3 flex flex-col gap-2 text-sm text-slate-500">
               <Link
-                href="/impressum"
+                href={getImprintHref(locale)}
                 className="transition hover:text-slate-900"
               >
                 {text.imprint}
               </Link>
 
               <Link
-                href="/datenschutz"
+                href={getPrivacyHref(locale)}
                 className="transition hover:text-slate-900"
               >
                 {text.privacy}
