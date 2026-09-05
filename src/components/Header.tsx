@@ -3,6 +3,42 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import {
+  getCalculatorHref,
+  getDevicesHref,
+  getFaqHref,
+  getHomeHref,
+  getHowItWorksHref,
+  type Locale,
+} from "@/i18n/config";
+
+type HeaderProps = {
+  locale?: Locale;
+};
+
+const navigation = {
+  de: {
+    calculator: "Rechner",
+    devices: "Geräte",
+    howItWorks: "So funktioniert's",
+    faq: "FAQ",
+    calculate: "Berechnen",
+    homeLabel: "TinyTools Startseite",
+    openNavigation: "Navigation öffnen",
+    closeNavigation: "Navigation schließen",
+  },
+  en: {
+    calculator: "Calculator",
+    devices: "Devices",
+    howItWorks: "How it works",
+    faq: "FAQ",
+    calculate: "Calculate",
+    homeLabel: "TinyTools home",
+    openNavigation: "Open navigation",
+    closeNavigation: "Close navigation",
+  },
+} as const;
+
 function TinyToolsLogo() {
   return (
     <div className="flex items-center gap-2.5">
@@ -59,8 +95,19 @@ function TinyToolsLogo() {
   );
 }
 
-export default function Header() {
+export default function Header({ locale = "de" }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const text = navigation[locale];
+
+  const homeHref = getHomeHref(locale);
+  const calculatorHref = getCalculatorHref(locale);
+  const devicesHref = getDevicesHref(locale);
+  const howItWorksHref = getHowItWorksHref(locale);
+  const faqHref = getFaqHref(locale);
+
+  const otherLocale: Locale = locale === "de" ? "en" : "de";
+  const languageHref = getHomeHref(otherLocale);
 
   function closeMenu() {
     setMenuOpen(false);
@@ -70,12 +117,13 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 backdrop-blur-xl">
       <div className="mx-auto max-w-6xl px-5 sm:px-6">
         <div className="flex min-h-[72px] items-center justify-between gap-4">
+          {/* Logo */}
           <div className="flex shrink-0 items-center">
             <Link
-              href="/"
+              href={homeHref}
               onClick={closeMenu}
               className="transition-opacity hover:opacity-80"
-              aria-label="TinyTools Startseite"
+              aria-label={text.homeLabel}
             >
               <TinyToolsLogo />
             </Link>
@@ -85,43 +133,93 @@ export default function Header() {
             </span>
           </div>
 
-          <nav className="hidden items-center gap-7 text-[15px] font-semibold text-slate-700 md:flex">
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center text-[15px] font-semibold text-slate-700 md:grid md:grid-cols-[92px_78px_128px_48px] md:gap-3">
             <a
-              href="/#rechner"
-              className="transition hover:text-green-700"
+              href={calculatorHref}
+              className="flex justify-center whitespace-nowrap transition hover:text-green-700"
             >
-              Rechner
+              {text.calculator}
             </a>
 
             <a
-              href="/geraete"
-              className="transition hover:text-green-700"
+              href={devicesHref}
+              className="flex justify-center whitespace-nowrap transition hover:text-green-700"
             >
-              Geräte
+              {text.devices}
             </a>
 
             <a
-              href="/#so-funktionierts"
-              className="transition hover:text-green-700"
+              href={howItWorksHref}
+              className="flex justify-center whitespace-nowrap transition hover:text-green-700"
             >
-              So funktioniert&apos;s
+              {text.howItWorks}
             </a>
 
             <a
-              href="/#faq"
-              className="transition hover:text-green-700"
+              href={faqHref}
+              className="flex justify-center whitespace-nowrap transition hover:text-green-700"
             >
-              FAQ
+              {text.faq}
             </a>
           </nav>
 
-          <div className="flex items-center gap-2">
-            <a
-              href="/#rechner"
+          {/* Right Side */}
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Language switch */}
+            <Link
+              href={languageHref}
               onClick={closeMenu}
-              className="hidden rounded-xl bg-green-700 px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md sm:inline-flex"
+              className="group relative -left-2 grid h-8 w-[70px] grid-cols-2 items-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-[3px] text-[11px] font-bold uppercase tracking-[0.05em] shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] transition duration-200 hover:border-green-200 hover:shadow-[inset_0_1px_2px_rgba(15,23,42,0.06),0_2px_6px_rgba(15,23,42,0.05)] active:scale-[0.97]"
+              aria-label={
+                locale === "de"
+                  ? "Switch to English"
+                  : "Zur deutschen Version wechseln"
+              }
             >
-              Berechnen
+              {/* beweglicher Schalter */}
+              <span
+                aria-hidden="true"
+                className={`absolute left-[3px] top-[3px] h-6 w-[30px] rounded-[6px] border border-green-100 bg-green-50 shadow-sm transition-transform duration-200 ease-out ${
+                  locale === "en"
+                    ? "translate-x-[31px]"
+                    : "translate-x-0"
+                }`}
+              />
+
+              {/* feine Mitteltrennung */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-[8px] h-4 w-px -translate-x-1/2 bg-slate-200/80"
+              />
+
+              <span
+                className={`relative z-10 flex h-full items-center justify-center transition-colors duration-200 ${
+                  locale === "de"
+                    ? "text-green-700"
+                    : "text-slate-400"
+                }`}
+              >
+                DE
+              </span>
+
+              <span
+                className={`relative z-10 flex h-full items-center justify-center transition-colors duration-200 ${
+                  locale === "en"
+                    ? "text-green-700"
+                    : "text-slate-400"
+                }`}
+              >
+                EN
+              </span>
+            </Link>
+
+            <a
+              href={calculatorHref}
+              onClick={closeMenu}
+              className="hidden w-[108px] items-center justify-center rounded-xl bg-green-700 px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-green-800 hover:shadow-md sm:inline-flex"
+            >
+              {text.calculate}
             </a>
 
             <button
@@ -130,8 +228,8 @@ export default function Header() {
               className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:border-green-200 hover:bg-green-50 hover:text-green-700 md:hidden"
               aria-label={
                 menuOpen
-                  ? "Navigation schließen"
-                  : "Navigation öffnen"
+                  ? text.closeNavigation
+                  : text.openNavigation
               }
               aria-expanded={menuOpen}
             >
@@ -142,47 +240,48 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Mobile Navigation */}
         {menuOpen && (
           <nav className="border-t border-slate-200 py-3 md:hidden">
             <div className="flex flex-col gap-1">
               <a
-                href="/#rechner"
+                href={calculatorHref}
                 onClick={closeMenu}
                 className="rounded-xl px-3 py-3 text-base font-semibold text-slate-700 transition hover:bg-green-50 hover:text-green-700"
               >
-                Rechner
+                {text.calculator}
               </a>
 
               <a
-                href="/geraete"
+                href={devicesHref}
                 onClick={closeMenu}
                 className="rounded-xl px-3 py-3 text-base font-semibold text-slate-700 transition hover:bg-green-50 hover:text-green-700"
               >
-                Geräte
+                {text.devices}
               </a>
 
               <a
-                href="/#so-funktionierts"
+                href={howItWorksHref}
                 onClick={closeMenu}
                 className="rounded-xl px-3 py-3 text-base font-semibold text-slate-700 transition hover:bg-green-50 hover:text-green-700"
               >
-                So funktioniert&apos;s
+                {text.howItWorks}
               </a>
 
               <a
-                href="/#faq"
+                href={faqHref}
                 onClick={closeMenu}
                 className="rounded-xl px-3 py-3 text-base font-semibold text-slate-700 transition hover:bg-green-50 hover:text-green-700"
               >
-                FAQ
+                {text.faq}
               </a>
 
               <a
-                href="/#rechner"
+                href={calculatorHref}
                 onClick={closeMenu}
                 className="mt-2 rounded-xl bg-green-700 px-3 py-3 text-center text-base font-semibold text-white transition hover:bg-green-800"
               >
-                Berechnen
+                {text.calculate}
               </a>
             </div>
           </nav>

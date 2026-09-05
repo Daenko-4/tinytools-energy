@@ -1,6 +1,44 @@
 import Link from "next/link";
 
-export default function Footer() {
+import {
+  getCalculatorHref,
+  getDevicesHref,
+  getFaqHref,
+  type Locale,
+} from "@/i18n/config";
+
+type FooterProps = {
+  locale?: Locale;
+};
+
+const footerText = {
+  de: {
+    description:
+      "Einfache Werkzeuge, die dir helfen, Stromverbrauch und Energiekosten besser zu verstehen.",
+    privateProject: "Derzeit ein privates, nicht kommerzielles Projekt.",
+    calculator: "Stromkosten-Rechner",
+    devices: "Geräteübersicht",
+    faq: "Häufige Fragen",
+    legal: "Rechtliches",
+    imprint: "Impressum",
+    privacy: "Datenschutz",
+  },
+  en: {
+    description:
+      "Simple tools that help you understand electricity consumption and energy costs.",
+    privateProject: "Currently a private, non-commercial project.",
+    calculator: "Electricity cost calculator",
+    devices: "Device overview",
+    faq: "Frequently asked questions",
+    legal: "Legal",
+    imprint: "Imprint",
+    privacy: "Privacy",
+  },
+} as const;
+
+export default function Footer({ locale = "de" }: FooterProps) {
+  const text = footerText[locale];
+
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-6">
@@ -11,12 +49,11 @@ export default function Footer() {
             </p>
 
             <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
-              Einfache Werkzeuge, die dir helfen,
-              Stromverbrauch und Energiekosten besser zu verstehen.
+              {text.description}
             </p>
 
             <p className="mt-3 text-xs leading-5 text-slate-400">
-              Derzeit ein privates, nicht kommerzielles Projekt.
+              {text.privateProject}
             </p>
           </div>
 
@@ -27,31 +64,31 @@ export default function Footer() {
 
             <div className="mt-3 flex flex-col gap-2 text-sm text-slate-500">
               <Link
-                href="/#rechner"
+                href={getCalculatorHref(locale)}
                 className="transition hover:text-slate-900"
               >
-                Stromkosten-Rechner
+                {text.calculator}
               </Link>
 
               <Link
-                href="/geraete"
+                href={getDevicesHref(locale)}
                 className="transition hover:text-slate-900"
               >
-                Geräteübersicht
+                {text.devices}
               </Link>
 
               <Link
-                href="/#faq"
+                href={getFaqHref(locale)}
                 className="transition hover:text-slate-900"
               >
-                Häufige Fragen
+                {text.faq}
               </Link>
             </div>
           </div>
 
           <div>
             <p className="text-sm font-bold text-slate-900">
-              Rechtliches
+              {text.legal}
             </p>
 
             <div className="mt-3 flex flex-col gap-2 text-sm text-slate-500">
@@ -59,14 +96,14 @@ export default function Footer() {
                 href="/impressum"
                 className="transition hover:text-slate-900"
               >
-                Impressum
+                {text.imprint}
               </Link>
 
               <Link
                 href="/datenschutz"
                 className="transition hover:text-slate-900"
               >
-                Datenschutz
+                {text.privacy}
               </Link>
             </div>
           </div>

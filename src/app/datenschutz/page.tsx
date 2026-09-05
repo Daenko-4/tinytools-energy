@@ -54,10 +54,10 @@ export default function DatenschutzPage() {
               <p>
                 E-Mail:{" "}
                 <a
-                  href="mailto:dan.florian@gmx.at"
+                  href="mailto:parkwaydrive@gmx.at"
                   className="font-medium text-green-600 hover:text-green-700"
                 >
-                  dan.florian@gmx.at
+                  parkwaydrive@gmx.at
                 </a>
               </p>
             </div>
